@@ -792,12 +792,14 @@ Renderer.prototype.html = function(html) {
   return html;
 };
 
-Renderer.prototype.heading = function(text, level, raw) {
+Renderer.prototype.heading = function(text, level, raw, line) {
   return '<h'
     + level
     + ' id="'
     + this.options.headerPrefix
     + raw.toLowerCase().replace(/[^\w]+/g, '-')
+    + '" data-line="'
+    + line
     + '">'
     + text
     + '</h'
@@ -980,7 +982,8 @@ Parser.prototype.tok = function() {
       return this.renderer.heading(
         this.inline.output(this.token.text),
         this.token.depth,
-        this.token.text);
+        this.token.text,
+        this.token.line);
     }
     case 'code': {
       return this.renderer.code(this.token.text,
