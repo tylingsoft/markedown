@@ -1,7 +1,7 @@
 /**
- * marked - a markdown parser
- * Copyright (c) 2011-2014, Christopher Jeffrey. (MIT Licensed)
- * https://github.com/chjj/marked
+ * markedown - a markdown parser based on marked, added some source map feature.
+ * Copyright (c) 2015, Tylingsoft. (MIT Licensed)
+ * https://github.com/tylingsoft/markedown
  */
 
 ;(function() {

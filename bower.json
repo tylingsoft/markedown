@@ -6,7 +6,7 @@
   "authors": [
     "Tyler Long <tyler4long@gmail.com>"
   ],
-  "description": "Markdown parser based on marked added some source map feature.",
+  "description": "Markdown parser based on marked, added some source map feature.",
   "keywords": [
     "markdown",
     "parser",
