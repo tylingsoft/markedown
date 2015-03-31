@@ -197,7 +197,6 @@ Lexer.prototype.token = function(src, top, bq) {
     // heading
     if (cap = this.rules.heading.exec(src)) {
       var line = totalLines - src.split(/\n/).length + 1;
-      console.log(line + ': ' + cap[0]);
       src = src.substring(cap[0].length);
       this.tokens.push({
         type: 'heading',
@@ -243,7 +242,6 @@ Lexer.prototype.token = function(src, top, bq) {
     // lheading
     if (cap = this.rules.lheading.exec(src)) {
       var line = totalLines - src.split(/\n/).length + 1;
-      console.log(line + ': ' + cap[0]);
       src = src.substring(cap[0].length);
       this.tokens.push({
         type: 'heading',
