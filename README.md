@@ -1,3 +1,3 @@
 # markedown
 
-A customized markdown parser based on marked.
+Markdown parser based on marked added some source map feature.
