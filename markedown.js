@@ -416,12 +416,14 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // top-level paragraph
     if (top && (cap = this.rules.paragraph.exec(src))) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
       this.tokens.push({
         type: 'paragraph',
         text: cap[1].charAt(cap[1].length - 1) === '\n'
           ? cap[1].slice(0, -1)
-          : cap[1]
+          : cap[1],
+        line: line
       });
       continue;
     }
@@ -818,8 +820,8 @@ Renderer.prototype.listitem = function(text) {
   return '<li>' + text + '</li>\n';
 };
 
-Renderer.prototype.paragraph = function(text) {
-  return '<p>' + text + '</p>\n';
+Renderer.prototype.paragraph = function(text, line) {
+  return '<p data-line="' + line + '">' + text + '</p>\n';
 };
 
 Renderer.prototype.table = function(header, body) {
@@ -1069,7 +1071,7 @@ Parser.prototype.tok = function() {
       return this.renderer.html(html);
     }
     case 'paragraph': {
-      return this.renderer.paragraph(this.inline.output(this.token.text));
+      return this.renderer.paragraph(this.inline.output(this.token.text, this.token.line));
     }
     case 'text': {
       return this.renderer.paragraph(this.parseText());
