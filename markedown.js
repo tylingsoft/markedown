@@ -285,12 +285,14 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // list
     if (cap = this.rules.list.exec(src)) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
       bull = cap[2];
 
       this.tokens.push({
         type: 'list_start',
-        ordered: bull.length > 1
+        ordered: bull.length > 1,
+        line: line
       });
 
       // Get each top-level item.
@@ -811,9 +813,9 @@ Renderer.prototype.hr = function() {
   return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
 };
 
-Renderer.prototype.list = function(body, ordered) {
+Renderer.prototype.list = function(body, ordered, line) {
   var type = ordered ? 'ol' : 'ul';
-  return '<' + type + '>\n' + body + '</' + type + '>\n';
+  return '<' + type + ' data-line="' + line + '">\n' + body + '</' + type + '>\n';
 };
 
 Renderer.prototype.listitem = function(text) {
@@ -1036,13 +1038,13 @@ Parser.prototype.tok = function() {
     }
     case 'list_start': {
       var body = ''
-        , ordered = this.token.ordered;
+        , ordered = this.token.ordered
+        , line = this.token.line;
 
       while (this.next().type !== 'list_end') {
         body += this.tok();
       }
-
-      return this.renderer.list(body, ordered);
+      return this.renderer.list(body, ordered, line);
     }
     case 'list_item_start': {
       var body = '';
