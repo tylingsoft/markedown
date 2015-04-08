@@ -172,24 +172,28 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // code
     if (cap = this.rules.code.exec(src)) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
       cap = cap[0].replace(/^ {4}/gm, '');
       this.tokens.push({
         type: 'code',
         text: !this.options.pedantic
           ? cap.replace(/\n+$/, '')
-          : cap
+          : cap,
+        line: line
       });
       continue;
     }
 
     // fences (gfm)
     if (cap = this.rules.fences.exec(src)) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
       this.tokens.push({
         type: 'code',
         lang: cap[2],
-        text: cap[3]
+        text: cap[3],
+        line: line
       });
       continue;
     }
@@ -763,7 +767,7 @@ function Renderer(options) {
   this.options = options || {};
 }
 
-Renderer.prototype.code = function(code, lang, escaped) {
+Renderer.prototype.code = function(code, lang, escaped, line) {
   if (this.options.highlight) {
     var out = this.options.highlight(code, lang);
     if (out != null && out !== code) {
@@ -773,12 +777,12 @@ Renderer.prototype.code = function(code, lang, escaped) {
   }
 
   if (!lang) {
-    return '<pre><code>'
+    return '<pre data-line="' + line + '"><code>'
       + (escaped ? code : escape(code, true))
       + '\n</code></pre>';
   }
 
-  return '<pre><code class="'
+  return '<pre data-line="' + line + '"><code class="'
     + this.options.langPrefix
     + escape(lang, true)
     + '">'
@@ -990,7 +994,8 @@ Parser.prototype.tok = function() {
     case 'code': {
       return this.renderer.code(this.token.text,
         this.token.lang,
-        this.token.escaped);
+        this.token.escaped,
+        this.token.line);
     }
     case 'table': {
       var header = ''
