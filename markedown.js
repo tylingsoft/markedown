@@ -1071,10 +1071,10 @@ Parser.prototype.tok = function() {
       return this.renderer.html(html);
     }
     case 'paragraph': {
-      return this.renderer.paragraph(this.inline.output(this.token.text, this.token.line));
+      return this.renderer.paragraph(this.inline.output(this.token.text), this.token.line);
     }
     case 'text': {
-      return this.renderer.paragraph(this.parseText());
+      return this.renderer.paragraph(this.parseText(), this.token.line);
     }
   }
 };
