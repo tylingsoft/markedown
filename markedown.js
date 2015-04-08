@@ -271,10 +271,12 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // blockquote
     if (cap = this.rules.blockquote.exec(src)) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
 
       this.tokens.push({
-        type: 'blockquote_start'
+        type: 'blockquote_start',
+        line: line
       });
 
       cap = cap[0].replace(/^ *> ?/gm, '');
@@ -796,8 +798,8 @@ Renderer.prototype.code = function(code, lang, escaped, line) {
     + '\n</code></pre>\n';
 };
 
-Renderer.prototype.blockquote = function(quote) {
-  return '<blockquote>\n' + quote + '</blockquote>\n';
+Renderer.prototype.blockquote = function(quote, line) {
+  return '<blockquote data-line="' + line + '">\n' + quote + '</blockquote>\n';
 };
 
 Renderer.prototype.html = function(html) {
@@ -1040,12 +1042,13 @@ Parser.prototype.tok = function() {
     }
     case 'blockquote_start': {
       var body = '';
+      var line = this.token.line;
 
       while (this.next().type !== 'blockquote_end') {
         body += this.tok();
       }
 
-      return this.renderer.blockquote(body);
+      return this.renderer.blockquote(body, line);
     }
     case 'list_start': {
       var body = ''
