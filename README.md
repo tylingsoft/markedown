@@ -5,8 +5,7 @@ Markdown parser based on marked, added some source map features.
 
 ## features added
 
-- You can get heading's source line number.
-- You can get `<p>`'s source line number.
+`data-line="123"` attributes are added to all the top level elements.
 
 
 ## installation
