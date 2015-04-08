@@ -213,13 +213,15 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // table no leading pipe (gfm)
     if (top && (cap = this.rules.nptable.exec(src))) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
 
       item = {
         type: 'table',
         header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
         align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3].replace(/\n$/, '').split('\n')
+        cells: cap[3].replace(/\n$/, '').split('\n'),
+        line: line
       };
 
       for (i = 0; i < item.align.length; i++) {
@@ -390,13 +392,15 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // table (gfm)
     if (top && (cap = this.rules.table.exec(src))) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
 
       item = {
         type: 'table',
         header: cap[1].replace(/^ *| *\| *$/g, '').split(/ *\| */),
         align: cap[2].replace(/^ *|\| *$/g, '').split(/ *\| */),
-        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n')
+        cells: cap[3].replace(/(?: *\| *)?\n$/, '').split('\n'),
+        line: line
       };
 
       for (i = 0; i < item.align.length; i++) {
@@ -832,8 +836,8 @@ Renderer.prototype.paragraph = function(text, line) {
   return '<p data-line="' + line + '">' + text + '</p>\n';
 };
 
-Renderer.prototype.table = function(header, body) {
-  return '<table>\n'
+Renderer.prototype.table = function(header, body, line) {
+  return '<table data-line="' + line + '">\n'
     + '<thead>\n'
     + header
     + '</thead>\n'
@@ -1032,7 +1036,7 @@ Parser.prototype.tok = function() {
 
         body += this.renderer.tablerow(cell);
       }
-      return this.renderer.table(header, body);
+      return this.renderer.table(header, body, this.token.line);
     }
     case 'blockquote_start': {
       var body = '';
