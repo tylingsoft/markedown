@@ -258,9 +258,11 @@ Lexer.prototype.token = function(src, top, bq) {
 
     // hr
     if (cap = this.rules.hr.exec(src)) {
+      var line = totalLines - src.split(/\n/).length + 1;
       src = src.substring(cap[0].length);
       this.tokens.push({
-        type: 'hr'
+        type: 'hr',
+        line: line
       });
       continue;
     }
@@ -813,8 +815,8 @@ Renderer.prototype.heading = function(text, level, raw, line) {
     + '>\n';
 };
 
-Renderer.prototype.hr = function() {
-  return this.options.xhtml ? '<hr/>\n' : '<hr>\n';
+Renderer.prototype.hr = function(line) {
+  return this.options.xhtml ? '<hr data-line="' + line + '"/>\n' : '<hr data-line="' + line + '">\n';
 };
 
 Renderer.prototype.list = function(body, ordered, line) {
@@ -982,7 +984,7 @@ Parser.prototype.tok = function() {
       return '';
     }
     case 'hr': {
-      return this.renderer.hr();
+      return this.renderer.hr(this.token.line);
     }
     case 'heading': {
       return this.renderer.heading(
